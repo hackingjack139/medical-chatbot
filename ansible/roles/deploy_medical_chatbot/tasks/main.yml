@@ -37,7 +37,7 @@
 
 - name: Start ELK observability stack
   ansible.builtin.command:
-    cmd: docker compose -p {{ observability_project_name }} -f {{ observability_compose_file_name }} up -d --build
+    cmd: docker compose -p {{ observability_project_name }} -f {{ observability_compose_file_name }} up -d
     chdir: "{{ deploy_root }}/observability"
   register: observability_up
   changed_when: observability_up.rc == 0
