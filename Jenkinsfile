@@ -80,6 +80,7 @@ pipeline {
                 expression { return fileExists('docker-compose.deploy.yml') }
             }
             steps {
+                sh 'docker rm -f medical-chatbot-frontend medical-chatbot-backend medical-chatbot-ml || true'
                 sh 'docker compose -p medical-chatbot -f docker-compose.deploy.yml pull'
                 sh 'docker compose -p medical-chatbot -f docker-compose.deploy.yml up -d --remove-orphans'
             }
