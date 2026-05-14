@@ -11,6 +11,37 @@
     dest: "{{ deploy_root }}/{{ compose_file_name }}"
     mode: "0644"
 
+- name: Ensure observability directories exist
+  ansible.builtin.file:
+    path: "{{ deploy_root }}/observability/logstash/pipeline"
+    state: directory
+    mode: "0755"
+
+- name: Copy ELK compose file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../observability/docker-compose.elk.yml"
+    dest: "{{ deploy_root }}/observability/{{ observability_compose_file_name }}"
+    mode: "0644"
+
+- name: Copy Logstash Dockerfile
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../observability/logstash/Dockerfile"
+    dest: "{{ deploy_root }}/observability/logstash/Dockerfile"
+    mode: "0644"
+
+- name: Copy Logstash pipeline config
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../observability/logstash/pipeline/logstash.conf"
+    dest: "{{ deploy_root }}/observability/logstash/pipeline/logstash.conf"
+    mode: "0644"
+
+- name: Start ELK observability stack
+  ansible.builtin.command:
+    cmd: docker compose -p {{ observability_project_name }} -f {{ observability_compose_file_name }} up -d --build
+    chdir: "{{ deploy_root }}/observability"
+  register: observability_up
+  changed_when: observability_up.rc == 0
+
 - name: Remove old standalone app containers if present
   ansible.builtin.command:
     cmd: docker rm -f medical-chatbot-frontend medical-chatbot-backend medical-chatbot-ml
@@ -31,4 +62,3 @@
     chdir: "{{ deploy_root }}"
   register: compose_up
   changed_when: "'Started' in compose_up.stdout or 'Recreated' in compose_up.stdout or 'Running' in compose_up.stdout or compose_up.rc == 0"
-

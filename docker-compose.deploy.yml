@@ -3,6 +3,11 @@ services:
     image: hackingjack139/medical-chatbot-ml:latest
     container_name: medical-chatbot-ml
     restart: unless-stopped
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://host.docker.internal:12201
+        tag: medical-chatbot-ml
     ports:
       - "8000:8000"
 
@@ -14,6 +19,11 @@ services:
       - ml-model
     environment:
       ML_SERVICE_URL: http://ml-model:8000/predict
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://host.docker.internal:12201
+        tag: medical-chatbot-backend
     ports:
       - "8081:8081"
 
@@ -23,5 +33,10 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://host.docker.internal:12201
+        tag: medical-chatbot-frontend
     ports:
       - "3000:80"
