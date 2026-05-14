@@ -96,14 +96,14 @@ pipeline {
                 expression { return fileExists('docker-compose.deploy.yml') }
             }
             steps {
-                sh 'docker compose -f docker-compose.deploy.yml up -d'
+                sh 'docker compose -p medical-chatbot -f docker-compose.deploy.yml pull'
+                sh 'docker compose -p medical-chatbot -f docker-compose.deploy.yml up -d --remove-orphans'
             }
         }
     }
 
     post {
         always {
-            sh 'command -v docker >/dev/null 2>&1 && docker compose down || true'
             sh 'command -v docker >/dev/null 2>&1 && docker logout || true'
             cleanWs()
         }

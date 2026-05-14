@@ -1,0 +1,27 @@
+services:
+  ml-model:
+    image: hackingjack139/medical-chatbot-ml:latest
+    container_name: medical-chatbot-ml
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+
+  backend:
+    image: hackingjack139/medical-chatbot-backend:latest
+    container_name: medical-chatbot-backend
+    restart: unless-stopped
+    depends_on:
+      - ml-model
+    environment:
+      ML_SERVICE_URL: http://ml-model:8000/predict
+    ports:
+      - "8081:8081"
+
+  frontend:
+    image: hackingjack139/medical-chatbot-frontend:latest
+    container_name: medical-chatbot-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
