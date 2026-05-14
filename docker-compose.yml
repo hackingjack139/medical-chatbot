@@ -1,0 +1,27 @@
+services:
+  ml-model:
+    build:
+      context: ./ml-model
+    container_name: medical-chatbot-ml
+    ports:
+      - "8000:8000"
+
+  backend:
+    build:
+      context: ./backend
+    container_name: medical-chatbot-backend
+    depends_on:
+      - ml-model
+    environment:
+      ML_SERVICE_URL: http://ml-model:8000/predict
+    ports:
+      - "8081:8081"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: medical-chatbot-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"

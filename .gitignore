@@ -4,5 +4,6 @@ venv/
 frontend/node_modules/
 frontend/.git.frontend-backup/
 ml-model/__pycache__/
+ml-model/.venv/
 backend/target/
 *.pyc

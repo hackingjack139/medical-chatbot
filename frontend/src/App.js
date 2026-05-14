@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 import "./App.css";
 
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "";
+
 function App() {
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -10,7 +12,7 @@ function App() {
 
   // Fetch symptoms
   useEffect(() => {
-    fetch("http://localhost:8081/api/symptoms")
+    fetch(`${apiBaseUrl}/api/symptoms`)
       .then(res => res.json())
       .then(data => {
         const formatted = data.map(s => ({
@@ -28,7 +30,7 @@ function App() {
     const symptoms = selected.map(s => s.value);
 
     try {
-      const response = await fetch("http://localhost:8081/api/diagnose", {
+      const response = await fetch(`${apiBaseUrl}/api/diagnose`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

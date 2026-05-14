@@ -1,5 +1,6 @@
 package com.medical.backend.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,18 +13,20 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class DiagnosisController {
 
+    @Value("${ml.service.url:http://localhost:8000/predict}")
+    private String mlServiceUrl;
+
     @PostMapping("/diagnose")
     public Map<String, Object> diagnose(@RequestBody Map<String, List<String>> request) {
 
         List<String> symptoms = request.get("symptoms");
 
         RestTemplate restTemplate = new RestTemplate();
-        String mlUrl = "http://localhost:8000/predict";
 
         Map<String, Object> mlRequest = new HashMap<>();
         mlRequest.put("symptoms", symptoms);
 
-        Map response = restTemplate.postForObject(mlUrl, mlRequest, Map.class);
+        Map response = restTemplate.postForObject(mlServiceUrl, mlRequest, Map.class);
 
         return response;
     }
