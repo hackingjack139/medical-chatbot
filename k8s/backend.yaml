@@ -22,6 +22,13 @@ spec:
               value: http://ml-model:8000/predict
           ports:
             - containerPort: 8081
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
           readinessProbe:
             httpGet:
               path: /api/symptoms
@@ -46,4 +53,4 @@ spec:
   ports:
     - port: 8081
       targetPort: 8081
-
+  type: ClusterIP
