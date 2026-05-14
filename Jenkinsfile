@@ -71,13 +71,9 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
-                sh 'docker compose build'
-                sh "docker tag \$(docker compose images -q frontend) ${FRONTEND_IMAGE}:${IMAGE_TAG}"
-                sh "docker tag \$(docker compose images -q backend) ${BACKEND_IMAGE}:${IMAGE_TAG}"
-                sh "docker tag \$(docker compose images -q ml-model) ${ML_IMAGE}:${IMAGE_TAG}"
-                sh "docker tag \$(docker compose images -q frontend) ${FRONTEND_IMAGE}:latest"
-                sh "docker tag \$(docker compose images -q backend) ${BACKEND_IMAGE}:latest"
-                sh "docker tag \$(docker compose images -q ml-model) ${ML_IMAGE}:latest"
+                sh "docker build -t ${FRONTEND_IMAGE}:${IMAGE_TAG} -t ${FRONTEND_IMAGE}:latest ./frontend"
+                sh "docker build -t ${BACKEND_IMAGE}:${IMAGE_TAG} -t ${BACKEND_IMAGE}:latest ./backend"
+                sh "docker build -t ${ML_IMAGE}:${IMAGE_TAG} -t ${ML_IMAGE}:latest ./ml-model"
             }
         }
 
