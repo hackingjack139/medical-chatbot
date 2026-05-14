@@ -80,16 +80,9 @@ pipeline {
                 expression { return fileExists('docker-compose.deploy.yml') }
             }
             steps {
-                sh '''
-                    docker run --rm \
-                      -v "$PWD:/workspace" \
-                      -v /var/run/docker.sock:/var/run/docker.sock \
-                      -w /workspace/ansible \
-                      python:3.12-slim sh -c "
-                        pip install --no-cache-dir ansible && \
-                        ansible-playbook playbook.yml
-                      "
-                '''
+                dir('ansible') {
+                    sh 'ansible-playbook playbook.yml'
+                }
             }
         }
     }

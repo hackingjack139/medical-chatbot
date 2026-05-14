@@ -10,7 +10,8 @@ RUN apt-get update \
     && . /etc/os-release \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian ${VERSION_CODENAME} stable" > /etc/apt/sources.list.d/docker.list \
     && apt-get update \
-    && apt-get install -y docker-ce-cli docker-compose-plugin \
+    && apt-get install -y docker-ce-cli docker-compose-plugin python3 python3-pip \
+    && pip3 install --no-cache-dir ansible \
     && rm -rf /var/lib/apt/lists/*
 
 USER jenkins
