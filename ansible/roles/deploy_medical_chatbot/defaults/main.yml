@@ -4,3 +4,10 @@ compose_project_name: medical-chatbot
 compose_file_name: docker-compose.deploy.yml
 observability_project_name: medical-chatbot-observability
 observability_compose_file_name: docker-compose.elk.yml
+security_project_name: medical-chatbot-security
+security_compose_file_name: docker-compose.vault.yml
+vault_addr: http://127.0.0.1:8200
+vault_token: root-token-medical-chatbot
+vault_secret_path: secret/data/medical-chatbot
+vault_ml_service_url: http://ml-model:8000/predict
+vault_backend_shared_secret: medical-chatbot-demo-secret

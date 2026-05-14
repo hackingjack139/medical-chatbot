@@ -16,6 +16,9 @@ public class DiagnosisController {
     @Value("${ml.service.url:http://localhost:8000/predict}")
     private String mlServiceUrl;
 
+    @Value("${BACKEND_SHARED_SECRET:}")
+    private String backendSharedSecret;
+
     @PostMapping("/diagnose")
     public Map<String, Object> diagnose(@RequestBody Map<String, List<String>> request) {
 
@@ -65,5 +68,13 @@ public class DiagnosisController {
                 "yellowish_skin",
                 "headache"
         );
+    }
+
+    @GetMapping("/status")
+    public Map<String, Object> status() {
+        Map<String, Object> status = new HashMap<>();
+        status.put("mlServiceUrlConfigured", mlServiceUrl != null && !mlServiceUrl.isBlank());
+        status.put("sharedSecretConfigured", backendSharedSecret != null && !backendSharedSecret.isBlank());
+        return status;
     }
 }

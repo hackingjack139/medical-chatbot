@@ -17,8 +17,11 @@ services:
     restart: unless-stopped
     depends_on:
       - ml-model
+    env_file:
+      - .env
     environment:
-      ML_SERVICE_URL: http://ml-model:8000/predict
+      ML_SERVICE_URL: ${ML_SERVICE_URL}
+      BACKEND_SHARED_SECRET: ${BACKEND_SHARED_SECRET}
     logging:
       driver: gelf
       options:

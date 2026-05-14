@@ -5,11 +5,68 @@
     state: directory
     mode: "0755"
 
+- name: Ensure security directory exists
+  ansible.builtin.file:
+    path: "{{ deploy_root }}/security"
+    state: directory
+    mode: "0755"
+
+- name: Copy Vault compose file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../security/docker-compose.vault.yml"
+    dest: "{{ deploy_root }}/security/{{ security_compose_file_name }}"
+    mode: "0644"
+
+- name: Start Vault
+  ansible.builtin.command:
+    cmd: docker compose -p {{ security_project_name }} -f {{ security_compose_file_name }} up -d
+    chdir: "{{ deploy_root }}/security"
+  register: vault_up
+  changed_when: vault_up.rc == 0
+
+- name: Wait for Vault API
+  ansible.builtin.uri:
+    url: "{{ vault_addr }}/v1/sys/health"
+    method: GET
+    status_code: [200, 429, 472, 473, 501]
+  register: vault_health
+  until: vault_health.status in [200, 429, 472, 473]
+  retries: 20
+  delay: 2
+
+- name: Seed deployment secrets in Vault
+  ansible.builtin.uri:
+    url: "{{ vault_addr }}/v1/{{ vault_secret_path }}"
+    method: POST
+    headers:
+      X-Vault-Token: "{{ vault_token }}"
+    body_format: json
+    body:
+      data:
+        ml_service_url: "{{ vault_ml_service_url }}"
+        backend_shared_secret: "{{ vault_backend_shared_secret }}"
+    status_code: 200
+
+- name: Read deployment secrets from Vault
+  ansible.builtin.uri:
+    url: "{{ vault_addr }}/v1/{{ vault_secret_path }}"
+    method: GET
+    headers:
+      X-Vault-Token: "{{ vault_token }}"
+    status_code: 200
+  register: vault_secret_response
+
 - name: Copy deployment compose file
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../docker-compose.deploy.yml"
     dest: "{{ deploy_root }}/{{ compose_file_name }}"
     mode: "0644"
+
+- name: Render deployment environment file from Vault secrets
+  ansible.builtin.template:
+    src: app.env.j2
+    dest: "{{ deploy_root }}/.env"
+    mode: "0600"
 
 - name: Ensure observability directories exist
   ansible.builtin.file:
