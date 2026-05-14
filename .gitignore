@@ -1,8 +1,8 @@
 medical-chatbot.zip
 FinalProjectGuidelinesAndEvaluationCriteria.pdf
-medical-chatbot/venv/
-medical-chatbot/frontend/node_modules/
-medical-chatbot/frontend/.git.frontend-backup/
-medical-chatbot/ml-model/__pycache__/
-medical-chatbot/backend/target/
+venv/
+frontend/node_modules/
+frontend/.git.frontend-backup/
+ml-model/__pycache__/
+backend/target/
 *.pyc
