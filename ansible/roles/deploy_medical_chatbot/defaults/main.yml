@@ -1,0 +1,5 @@
+---
+deploy_root: /tmp/medical-chatbot-deploy
+compose_project_name: medical-chatbot
+compose_file_name: docker-compose.deploy.yml
+

@@ -80,9 +80,16 @@ pipeline {
                 expression { return fileExists('docker-compose.deploy.yml') }
             }
             steps {
-                sh 'docker rm -f medical-chatbot-frontend medical-chatbot-backend medical-chatbot-ml || true'
-                sh 'docker compose -p medical-chatbot -f docker-compose.deploy.yml pull'
-                sh 'docker compose -p medical-chatbot -f docker-compose.deploy.yml up -d --remove-orphans'
+                sh '''
+                    docker run --rm \
+                      -v "$PWD:/workspace" \
+                      -v /var/run/docker.sock:/var/run/docker.sock \
+                      -w /workspace/ansible \
+                      python:3.12-slim sh -c "
+                        pip install --no-cache-dir ansible && \
+                        ansible-playbook playbook.yml
+                      "
+                '''
             }
         }
     }

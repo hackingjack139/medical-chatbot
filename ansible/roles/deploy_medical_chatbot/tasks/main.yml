@@ -1,0 +1,34 @@
+---
+- name: Ensure deployment directory exists
+  ansible.builtin.file:
+    path: "{{ deploy_root }}"
+    state: directory
+    mode: "0755"
+
+- name: Copy deployment compose file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../docker-compose.deploy.yml"
+    dest: "{{ deploy_root }}/{{ compose_file_name }}"
+    mode: "0644"
+
+- name: Remove old standalone app containers if present
+  ansible.builtin.command:
+    cmd: docker rm -f medical-chatbot-frontend medical-chatbot-backend medical-chatbot-ml
+  register: remove_containers
+  failed_when: false
+  changed_when: remove_containers.rc == 0
+
+- name: Pull latest deployment images
+  ansible.builtin.command:
+    cmd: docker compose -p {{ compose_project_name }} -f {{ compose_file_name }} pull
+    chdir: "{{ deploy_root }}"
+  register: compose_pull
+  changed_when: "'Pulled' in compose_pull.stdout or 'Downloaded' in compose_pull.stdout or compose_pull.rc == 0"
+
+- name: Start deployment stack
+  ansible.builtin.command:
+    cmd: docker compose -p {{ compose_project_name }} -f {{ compose_file_name }} up -d --remove-orphans
+    chdir: "{{ deploy_root }}"
+  register: compose_up
+  changed_when: "'Started' in compose_up.stdout or 'Recreated' in compose_up.stdout or 'Running' in compose_up.stdout or compose_up.rc == 0"
+

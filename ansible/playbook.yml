@@ -1,0 +1,7 @@
+---
+- name: Deploy medical chatbot stack
+  hosts: deploy
+  gather_facts: false
+  roles:
+    - deploy_medical_chatbot
+
