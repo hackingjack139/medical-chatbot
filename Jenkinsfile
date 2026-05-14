@@ -22,6 +22,12 @@ pipeline {
         }
 
         stage('Frontend Test') {
+            agent {
+                docker {
+                    image 'node:20-alpine'
+                    reuseNode true
+                }
+            }
             steps {
                 dir('frontend') {
                     sh 'npm ci'
@@ -31,6 +37,12 @@ pipeline {
         }
 
         stage('Backend Test') {
+            agent {
+                docker {
+                    image 'maven:3.9.9-eclipse-temurin-21'
+                    reuseNode true
+                }
+            }
             steps {
                 dir('backend') {
                     sh 'chmod +x mvnw'
@@ -40,11 +52,15 @@ pipeline {
         }
 
         stage('ML Smoke Test') {
+            agent {
+                docker {
+                    image 'python:3.12-slim'
+                    reuseNode true
+                }
+            }
             steps {
                 dir('ml-model') {
                     sh '''
-                        python3 -m venv .venv
-                        . .venv/bin/activate
                         pip install --upgrade pip
                         pip install -r requirements.txt
                         python -m unittest test_app.py
@@ -92,8 +108,8 @@ pipeline {
 
     post {
         always {
-            sh 'docker compose down || true'
-            sh 'docker logout || true'
+            sh 'command -v docker >/dev/null 2>&1 && docker compose down || true'
+            sh 'command -v docker >/dev/null 2>&1 && docker logout || true'
             cleanWs()
         }
     }
