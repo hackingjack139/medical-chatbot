@@ -5,7 +5,6 @@ pipeline {
         FRONTEND_IMAGE = "hackingjack139/medical-chatbot-frontend"
         BACKEND_IMAGE = "hackingjack139/medical-chatbot-backend"
         ML_IMAGE = "hackingjack139/medical-chatbot-ml"
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKER_BUILDKIT = "1"
         COMPOSE_DOCKER_CLI_BUILD = "1"
         DOCKERHUB_USERNAME = credentials('dockerhub-username')
@@ -53,38 +52,23 @@ pipeline {
             }
         }
 
-        stage('ML Smoke Test') {
-            agent {
-                docker {
-                    image 'python:3.12-slim'
-                    reuseNode true
-                }
-            }
+        stage('Build Docker Images') {
             steps {
-                dir('ml-model') {
-                    sh '''
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                        python -m unittest test_app.py
-                    '''
-                }
+                sh "docker build -t ${FRONTEND_IMAGE}:latest ./frontend"
+                sh "docker build -t ${BACKEND_IMAGE}:latest ./backend"
+                sh "docker build -t ${ML_IMAGE}:latest ./ml-model"
             }
         }
 
-        stage('Build Docker Images') {
+        stage('ML Smoke Test') {
             steps {
-                sh "docker build -t ${FRONTEND_IMAGE}:${IMAGE_TAG} -t ${FRONTEND_IMAGE}:latest ./frontend"
-                sh "docker build -t ${BACKEND_IMAGE}:${IMAGE_TAG} -t ${BACKEND_IMAGE}:latest ./backend"
-                sh "docker build -t ${ML_IMAGE}:${IMAGE_TAG} -t ${ML_IMAGE}:latest ./ml-model"
+                sh "docker run --rm ${ML_IMAGE}:latest python -m unittest test_app.py"
             }
         }
 
         stage('Push Docker Images') {
             steps {
                 sh 'echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin'
-                sh "docker push ${FRONTEND_IMAGE}:${IMAGE_TAG}"
-                sh "docker push ${BACKEND_IMAGE}:${IMAGE_TAG}"
-                sh "docker push ${ML_IMAGE}:${IMAGE_TAG}"
                 sh "docker push ${FRONTEND_IMAGE}:latest"
                 sh "docker push ${BACKEND_IMAGE}:latest"
                 sh "docker push ${ML_IMAGE}:latest"
