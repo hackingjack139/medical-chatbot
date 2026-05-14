@@ -1,0 +1,18 @@
+mlserver start :-
+
+cd ~/medical-chatbot/ml-model
+source ../venv/bin/activate
+uvicorn app:app --reload
+
+backend:-
+
+from intellij run
+	or 
+cd ~/medical-chatbot/backend
+mvn spring-boot:run
+
+frontend:-
+
+cd ~/medical-chatbot/frontend
+npm start
+
