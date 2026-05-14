@@ -8,6 +8,8 @@ pipeline {
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKER_BUILDKIT = "1"
         COMPOSE_DOCKER_CLI_BUILD = "1"
+        DOCKERHUB_USERNAME = credentials('dockerhub-username')
+        DOCKERHUB_TOKEN = credentials('dockerhub-token')
     }
 
     options {
@@ -78,9 +80,6 @@ pipeline {
         }
 
         stage('Push Docker Images') {
-            when {
-                expression { return env.DOCKERHUB_USERNAME?.trim() && env.DOCKERHUB_TOKEN?.trim() }
-            }
             steps {
                 sh 'echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin'
                 sh "docker push ${FRONTEND_IMAGE}:${IMAGE_TAG}"
