@@ -1,18 +1,65 @@
-mlserver start :-
+Local quick-start
 
-cd ~/medical-chatbot/ml-model
-source ../venv/bin/activate
-uvicorn app:app --reload
+App stack:
 
-backend:-
+```bash
+cd /Users/manzil/spe
+docker compose up --build
+```
 
-from intellij run
-	or 
-cd ~/medical-chatbot/backend
-mvn spring-boot:run
+Main endpoints:
 
-frontend:-
+- frontend: http://localhost:3000
+- backend: http://localhost:8081
+- ml-model: http://localhost:8000
 
-cd ~/medical-chatbot/frontend
-npm start
+ELK stack:
 
+```bash
+cd /Users/manzil/spe
+docker compose -f observability/docker-compose.elk.yml up -d
+```
+
+Observability endpoints:
+
+- Elasticsearch: http://localhost:9200
+- Kibana: http://localhost:5601
+
+Kubernetes apply order:
+
+```bash
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/ml-model.yaml
+kubectl apply -f k8s/backend.yaml
+kubectl apply -f k8s/frontend.yaml
+kubectl apply -f k8s/hpa.yaml
+kubectl apply -f k8s/fluent-bit.yaml
+```
+
+Useful checks:
+
+```bash
+kubectl get all -n medical-chatbot
+kubectl get hpa -n medical-chatbot
+kubectl top pods -n medical-chatbot
+```
+
+Vault setup for compose deploy:
+
+```bash
+export VAULT_TOKEN=your-token
+export VAULT_DEV_ROOT_TOKEN_ID="$VAULT_TOKEN"
+docker compose -f security/docker-compose.vault.yml up -d
+vault kv put secret/medical-chatbot \
+  ml_service_url="http://ml-model:8000/predict" \
+  backend_shared_secret="your-shared-secret"
+```
+
+Jenkins pipeline:
+
+- webhook-triggered from GitHub
+- supports `compose` and `kubernetes` deploy targets
+- builds immutable image tags using commit SHA
+- scans images with Trivy
+- verifies deployment after rollout
+- expects a Jenkins secret text credential named `vault-token` for compose deployments

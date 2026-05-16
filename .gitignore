@@ -7,3 +7,10 @@ ml-model/__pycache__/
 ml-model/.venv/
 backend/target/
 *.pyc
+.DS_Store
+FINAL_PROJECT_REPORT.md
+FINAL_PROJECT_REPORT.tex
+FINAL_PROJECT_REPORT.pdf
+report-assets/
+render_report_pdf.py
+.env

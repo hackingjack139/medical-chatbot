@@ -7,7 +7,7 @@ observability_compose_file_name: docker-compose.elk.yml
 security_project_name: medical-chatbot-security
 security_compose_file_name: docker-compose.vault.yml
 vault_addr: http://127.0.0.1:8200
-vault_token: root-token-medical-chatbot
+vault_token_env_var: VAULT_TOKEN
+vault_dev_root_token_env_var: VAULT_DEV_ROOT_TOKEN_ID
 vault_secret_path: secret/data/medical-chatbot
-vault_ml_service_url: http://ml-model:8000/predict
-vault_backend_shared_secret: medical-chatbot-demo-secret
+app_image_tag: latest

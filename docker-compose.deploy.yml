@@ -1,6 +1,6 @@
 services:
   ml-model:
-    image: hackingjack139/medical-chatbot-ml:latest
+    image: hackingjack139/medical-chatbot-ml:${APP_IMAGE_TAG:-latest}
     container_name: medical-chatbot-ml
     restart: unless-stopped
     logging:
@@ -12,7 +12,7 @@ services:
       - "8000:8000"
 
   backend:
-    image: hackingjack139/medical-chatbot-backend:latest
+    image: hackingjack139/medical-chatbot-backend:${APP_IMAGE_TAG:-latest}
     container_name: medical-chatbot-backend
     restart: unless-stopped
     depends_on:
@@ -31,7 +31,7 @@ services:
       - "8081:8081"
 
   frontend:
-    image: hackingjack139/medical-chatbot-frontend:latest
+    image: hackingjack139/medical-chatbot-frontend:${APP_IMAGE_TAG:-latest}
     container_name: medical-chatbot-frontend
     restart: unless-stopped
     depends_on:

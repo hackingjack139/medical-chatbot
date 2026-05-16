@@ -19,6 +19,7 @@ services:
       - elasticsearch
     ports:
       - "12201:12201/udp"
+      - "24224:24224"
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.14.3

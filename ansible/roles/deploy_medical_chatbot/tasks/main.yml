@@ -1,4 +1,19 @@
 ---
+- name: Read Vault token from environment
+  ansible.builtin.set_fact:
+    vault_token: "{{ lookup('ansible.builtin.env', vault_token_env_var) }}"
+
+- name: Read Vault dev root token from environment
+  ansible.builtin.set_fact:
+    vault_dev_root_token: "{{ lookup('ansible.builtin.env', vault_dev_root_token_env_var) | default(vault_token, true) }}"
+
+- name: Ensure Vault token is provided
+  ansible.builtin.assert:
+    that:
+      - vault_token is defined
+      - vault_token | length > 0
+    fail_msg: "Vault token is required. Export VAULT_TOKEN (and optionally VAULT_DEV_ROOT_TOKEN_ID) before running the deployment."
+
 - name: Ensure deployment directory exists
   ansible.builtin.file:
     path: "{{ deploy_root }}"
@@ -21,6 +36,8 @@
   ansible.builtin.command:
     cmd: docker compose -p {{ security_project_name }} -f {{ security_compose_file_name }} up -d
     chdir: "{{ deploy_root }}/security"
+  environment:
+    VAULT_DEV_ROOT_TOKEN_ID: "{{ vault_dev_root_token }}"
   register: vault_up
   changed_when: vault_up.rc == 0
 
@@ -34,19 +51,6 @@
   retries: 20
   delay: 2
 
-- name: Seed deployment secrets in Vault
-  ansible.builtin.uri:
-    url: "{{ vault_addr }}/v1/{{ vault_secret_path }}"
-    method: POST
-    headers:
-      X-Vault-Token: "{{ vault_token }}"
-    body_format: json
-    body:
-      data:
-        ml_service_url: "{{ vault_ml_service_url }}"
-        backend_shared_secret: "{{ vault_backend_shared_secret }}"
-    status_code: 200
-
 - name: Read deployment secrets from Vault
   ansible.builtin.uri:
     url: "{{ vault_addr }}/v1/{{ vault_secret_path }}"
@@ -56,11 +60,28 @@
     status_code: 200
   register: vault_secret_response
 
+- name: Ensure required deployment secrets exist in Vault
+  ansible.builtin.assert:
+    that:
+      - vault_secret_response.json.data.data.ml_service_url is defined
+      - vault_secret_response.json.data.data.ml_service_url | length > 0
+      - vault_secret_response.json.data.data.backend_shared_secret is defined
+      - vault_secret_response.json.data.data.backend_shared_secret | length > 0
+    fail_msg: "Required secrets are missing in Vault at {{ vault_secret_path }}. Populate ml_service_url and backend_shared_secret before deploying."
+
 - name: Copy deployment compose file
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../docker-compose.deploy.yml"
     dest: "{{ deploy_root }}/{{ compose_file_name }}"
     mode: "0644"
+
+- name: Preserve previous deployment environment file if present
+  ansible.builtin.copy:
+    src: "{{ deploy_root }}/.env"
+    dest: "{{ deploy_root }}/.env.previous"
+    remote_src: true
+    mode: "0600"
+  failed_when: false
 
 - name: Render deployment environment file from Vault secrets
   ansible.builtin.template:
