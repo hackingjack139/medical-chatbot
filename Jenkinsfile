@@ -184,8 +184,14 @@ pipeline {
 
     post {
         always {
-            sh 'command -v docker >/dev/null 2>&1 && docker logout || true'
-            cleanWs()
+            script {
+                if (getContext(hudson.FilePath)) {
+                    sh 'command -v docker >/dev/null 2>&1 && docker logout || true'
+                    cleanWs()
+                } else {
+                    echo 'Skipping workspace cleanup because no FilePath context is available.'
+                }
+            }
         }
     }
 }
