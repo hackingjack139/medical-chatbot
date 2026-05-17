@@ -142,7 +142,7 @@ pipeline {
             }
             steps {
                 dir('ansible') {
-                    sh 'VAULT_DEV_ROOT_TOKEN_ID="$VAULT_TOKEN" ansible-playbook playbook.yml -e app_image_tag=$IMAGE_TAG'
+                    sh 'VAULT_ADDR="http://host.docker.internal:8200" VAULT_DEV_ROOT_TOKEN_ID="$VAULT_TOKEN" ansible-playbook playbook.yml -e app_image_tag=$IMAGE_TAG'
                 }
             }
         }
@@ -170,7 +170,7 @@ pipeline {
                             PREVIOUS_TAG=$(awk -F= '/^APP_IMAGE_TAG=/{print $2}' /tmp/medical-chatbot-deploy/.env.previous 2>/dev/null || true)
                             if [ -n "${PREVIOUS_TAG}" ]; then
                               echo "Verification failed. Rolling back compose deployment to ${PREVIOUS_TAG}"
-                              VAULT_DEV_ROOT_TOKEN_ID="$VAULT_TOKEN" ansible-playbook playbook.yml -e app_image_tag="${PREVIOUS_TAG}" || true
+                              VAULT_ADDR="http://host.docker.internal:8200" VAULT_DEV_ROOT_TOKEN_ID="$VAULT_TOKEN" ansible-playbook playbook.yml -e app_image_tag="${PREVIOUS_TAG}" || true
                             fi
                             echo "Post-deploy verification failed"
                             exit 1

@@ -139,6 +139,7 @@ medical-chatbot-logs-*
 Vault runs in Docker dev mode for local demonstration:
 
 - endpoint: `http://localhost:8200`
+- Jenkins compose deploys use `http://host.docker.internal:8200` to reach that same Vault service from inside the Jenkins container
 
 See:
 

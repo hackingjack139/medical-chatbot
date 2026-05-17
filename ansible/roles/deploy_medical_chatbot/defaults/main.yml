@@ -6,7 +6,8 @@ observability_project_name: medical-chatbot-observability
 observability_compose_file_name: docker-compose.elk.yml
 security_project_name: medical-chatbot-security
 security_compose_file_name: docker-compose.vault.yml
-vault_addr: http://127.0.0.1:8200
+vault_addr_default: http://127.0.0.1:8200
+vault_addr_env_var: VAULT_ADDR
 vault_token_env_var: VAULT_TOKEN
 vault_dev_root_token_env_var: VAULT_DEV_ROOT_TOKEN_ID
 vault_secret_path: secret/data/medical-chatbot

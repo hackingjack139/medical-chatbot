@@ -3,6 +3,10 @@
   ansible.builtin.set_fact:
     vault_token: "{{ lookup('ansible.builtin.env', vault_token_env_var) }}"
 
+- name: Read Vault address from environment
+  ansible.builtin.set_fact:
+    vault_addr_resolved: "{{ lookup('ansible.builtin.env', vault_addr_env_var) | default(vault_addr_default, true) }}"
+
 - name: Read Vault dev root token from environment
   ansible.builtin.set_fact:
     vault_dev_root_token: "{{ lookup('ansible.builtin.env', vault_dev_root_token_env_var) | default(vault_token, true) }}"
@@ -43,7 +47,7 @@
 
 - name: Wait for Vault API
   ansible.builtin.uri:
-    url: "{{ vault_addr }}/v1/sys/health"
+    url: "{{ vault_addr_resolved }}/v1/sys/health"
     method: GET
     status_code: [200, 429, 472, 473, 501]
   register: vault_health
@@ -53,7 +57,7 @@
 
 - name: Read deployment secrets from Vault
   ansible.builtin.uri:
-    url: "{{ vault_addr }}/v1/{{ vault_secret_path }}"
+    url: "{{ vault_addr_resolved }}/v1/{{ vault_secret_path }}"
     method: GET
     headers:
       X-Vault-Token: "{{ vault_token }}"

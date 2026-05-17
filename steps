@@ -63,3 +63,4 @@ Jenkins pipeline:
 - scans images with Trivy
 - verifies deployment after rollout
 - expects a Jenkins secret text credential named `vault-token` for compose deployments
+- compose deploys inside Jenkins reach Vault via `http://host.docker.internal:8200`

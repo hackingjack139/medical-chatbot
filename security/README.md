@@ -14,6 +14,14 @@ The Ansible deployment role:
 2. Reads deployment secrets from Vault
 3. Generates the application `.env` file from Vault values
 
+When this deploy flow runs inside Jenkins, Vault is reached at:
+
+```text
+http://host.docker.internal:8200
+```
+
+because Jenkins itself runs in a container while the Vault container is started on the host Docker daemon.
+
 Demo note:
 
 - This is a local development/demo Vault setup, not production-hardening.
