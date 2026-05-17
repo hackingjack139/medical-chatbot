@@ -90,6 +90,8 @@ Jenkins can deploy the app stack through Ansible using:
 - [`ansible/playbook.yml`](/Users/manzil/spe/ansible/playbook.yml)
 - [`ansible/roles/deploy_medical_chatbot`](/Users/manzil/spe/ansible/roles/deploy_medical_chatbot)
 
+The deploy compose frontend is exposed on `http://localhost:3001` to avoid clashing with local development runs on `3000`.
+
 ### 2. Kubernetes + HPA
 
 This path is available for orchestration and scaling validation.

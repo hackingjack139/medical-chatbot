@@ -42,4 +42,4 @@ services:
         gelf-address: udp://127.0.0.1:12201
         tag: medical-chatbot-frontend
     ports:
-      - "3000:80"
+      - "${FRONTEND_PORT:-3001}:80"

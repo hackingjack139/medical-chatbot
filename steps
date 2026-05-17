@@ -64,3 +64,4 @@ Jenkins pipeline:
 - verifies deployment after rollout
 - expects a Jenkins secret text credential named `vault-token` for compose deployments
 - compose deploys inside Jenkins reach Vault via `http://host.docker.internal:8200`
+- compose deploy frontend is exposed on `http://localhost:3001` to avoid host port conflicts with local app runs on `3000`

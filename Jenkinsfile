@@ -160,7 +160,7 @@ pipeline {
                             sh '''
                             set -eu
                             for i in $(seq 1 20); do
-                              if curl -fsS http://localhost:3000 >/dev/null \
+                              if curl -fsS http://localhost:3001 >/dev/null \
                                 && curl -fsS http://localhost:8081/api/status >/dev/null \
                                 && curl -fsS http://localhost:8000/ >/dev/null; then
                                 exit 0
