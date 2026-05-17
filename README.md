@@ -34,10 +34,6 @@ This project includes:
 
 ![Jenkins pipeline success](docs/readme-assets/jenkins-stages-success.png)
 
-### Docker Hub Images
-
-![Docker Hub repositories](docs/readme-assets/dockerhub-repos.png)
-
 ### Kibana Logs
 
 ![Kibana Discover logs](docs/readme-assets/kibana-discover-logs.png)
