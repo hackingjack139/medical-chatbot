@@ -28,6 +28,24 @@ This project includes:
 - ELK observability stack
 - Vault-backed deployment secrets
 
+## Screenshots
+
+### Jenkins Pipeline
+
+![Jenkins pipeline success](docs/readme-assets/jenkins-stages-success.png)
+
+### Docker Hub Images
+
+![Docker Hub repositories](docs/readme-assets/dockerhub-repos.png)
+
+### Kibana Logs
+
+![Kibana Discover logs](docs/readme-assets/kibana-discover-logs.png)
+
+### Kubernetes App
+
+![Kubernetes app UI](docs/readme-assets/app-ui-k8s.png)
+
 ## Repository Layout
 
 ```text
@@ -76,8 +94,8 @@ Current pipeline improvements include:
 
 See:
 
-- [`Jenkinsfile`](/Users/manzil/spe/Jenkinsfile)
-- [`jenkins/Dockerfile`](/Users/manzil/spe/jenkins/Dockerfile)
+- [`Jenkinsfile`](Jenkinsfile)
+- [`jenkins/Dockerfile`](jenkins/Dockerfile)
 
 ## Deployment Modes
 
@@ -87,8 +105,8 @@ This is the current main application deployment path.
 
 Jenkins can deploy the app stack through Ansible using:
 
-- [`ansible/playbook.yml`](/Users/manzil/spe/ansible/playbook.yml)
-- [`ansible/roles/deploy_medical_chatbot`](/Users/manzil/spe/ansible/roles/deploy_medical_chatbot)
+- [`ansible/playbook.yml`](ansible/playbook.yml)
+- [`ansible/roles/deploy_medical_chatbot`](ansible/roles/deploy_medical_chatbot)
 
 The deploy compose frontend is exposed on `http://localhost:3001` to avoid clashing with local development runs on `3000`.
 
@@ -98,12 +116,12 @@ This path is available for orchestration and scaling validation.
 
 Useful files:
 
-- [`k8s/frontend.yaml`](/Users/manzil/spe/k8s/frontend.yaml)
-- [`k8s/backend.yaml`](/Users/manzil/spe/k8s/backend.yaml)
-- [`k8s/ml-model.yaml`](/Users/manzil/spe/k8s/ml-model.yaml)
-- [`k8s/hpa.yaml`](/Users/manzil/spe/k8s/hpa.yaml)
-- [`k8s/deploy.sh`](/Users/manzil/spe/k8s/deploy.sh)
-- [`k8s/verify.sh`](/Users/manzil/spe/k8s/verify.sh)
+- [`k8s/frontend.yaml`](k8s/frontend.yaml)
+- [`k8s/backend.yaml`](k8s/backend.yaml)
+- [`k8s/ml-model.yaml`](k8s/ml-model.yaml)
+- [`k8s/hpa.yaml`](k8s/hpa.yaml)
+- [`k8s/deploy.sh`](k8s/deploy.sh)
+- [`k8s/verify.sh`](k8s/verify.sh)
 
 ## Local Run
 
@@ -145,7 +163,7 @@ Vault runs in Docker dev mode for local demonstration:
 
 See:
 
-- [`security/README.md`](/Users/manzil/spe/security/README.md)
+- [`security/README.md`](security/README.md)
 
 ## Kubernetes Notes
 
@@ -183,8 +201,8 @@ Current observability paths:
 
 See:
 
-- [`observability/README.md`](/Users/manzil/spe/observability/README.md)
-- [`k8s/fluent-bit.yaml`](/Users/manzil/spe/k8s/fluent-bit.yaml)
+- [`observability/README.md`](observability/README.md)
+- [`k8s/fluent-bit.yaml`](k8s/fluent-bit.yaml)
 
 ## Security Notes
 
