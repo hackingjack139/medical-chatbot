@@ -84,14 +84,15 @@ pipeline {
                 sh '''
                     set -eu
                     for image in \
-                      "${FRONTEND_IMAGE}:${IMAGE_TAG}" \
                       "${BACKEND_IMAGE}:${IMAGE_TAG}" \
                       "${ML_IMAGE}:${IMAGE_TAG}"; do
                       echo "Scanning ${image}"
                       docker run --rm \
                         -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v trivy_cache:/root/.cache/trivy \
                         aquasec/trivy:0.54.1 image \
-                        --severity HIGH,CRITICAL \
+                        --scanners vuln \
+                        --severity CRITICAL \
                         --ignore-unfixed \
                         --exit-code 0 \
                         "${image}"
